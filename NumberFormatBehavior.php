@@ -27,9 +27,6 @@ class NumberFormatBehavior extends ConverterBehavior
 
         if ($this->thousandSeparator===null)
             $this->thousandSeparator = Yii::$app->formatter->thousandSeparator;
-
-        if ($this->decimals===null)
-            $this->decimals = 2;
     }
     
     /**
@@ -37,7 +34,8 @@ class NumberFormatBehavior extends ConverterBehavior
      */
     protected function convertToStoredFormat($value)
     {
-        if (empty($value)) {
+        // can't use empty here since empty(0) is true
+        if (strlen($value)==0) {
             return null;
         }
 
@@ -51,14 +49,16 @@ class NumberFormatBehavior extends ConverterBehavior
      */
     protected function convertFromStoredFormat($value)
     {
-        if (empty($value)) {
+        // can't use empty here since empty(0) is true
+        if (strlen($value)==0) {
             return null;
         }
         
-//        if (preg_match('#^[0-9]+$#', $value))
-//            return $value;
+        if (preg_match('#^[0-9]+$#', $value) || !preg_match('#^[0-9]+\.[0-9]+$#', $value))
+            return $value;
 
-        return number_format($value, $this->decimals, $this->decimalSeparator, $this->thousandSeparator);
+        $decimals = isset($this->decimals) ? $this->decimals : strlen($value) - strrpos($value, '.') - 1;
+        return number_format($value, $decimals, $this->decimalSeparator, $this->thousandSeparator);
     }
 
 }
