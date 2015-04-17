@@ -39,7 +39,8 @@ abstract class ConverterBehavior extends \yii\base\Behavior
     public function __get($param)
     {
         if (isset($this->attributes[$param])) {
-            return $this->convertFromStoredFormat($this->owner->__get($this->attributes[$param]));
+            //return $this->convertFromStoredFormat($this->owner->__get($this->attributes[$param]));
+            return $this->convertFromStoredFormat($this->owner->{$this->attributes[$param]});
         } else {
             return parent::__get($param);
         }
@@ -52,7 +53,8 @@ abstract class ConverterBehavior extends \yii\base\Behavior
     public function __set($param, $value)
     {
         if (isset($this->attributes[$param])) {
-            $this->owner->__set($this->attributes[$param], $this->convertToStoredFormat($value));
+            //$this->owner->__set($this->attributes[$param], $this->convertToStoredFormat($value));
+            $this->owner->{$this->attributes[$param]} = $this->convertToStoredFormat($value);
         } else {
             parent::__set($param, $value);
         }
